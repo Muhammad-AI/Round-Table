@@ -1,17 +1,35 @@
-import React from 'react'
-import Button from '@material-ui/core/Button';
+import React from 'react';
+import './App.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  /* Link, */
+} from 'react-router-dom';
 
-const App = () => {
+import Main from './pages/Main';
+import Join from './pages/Join';
+import Hub from './pages/Hub';
+
+export default function App() {
   return (
-    <div>
-      <Button variant="contained" color="primary">
-        JOIN
-      </Button>
-      <Button variant="contained" color="secondary">
-        HOST
-      </Button>
-    </div>
-  )
+    <Router>
+      <div>
+        <Switch>
+          <Route path="/join">
+            <Join />
+          </Route>
+          {/*<Route path="/results/:sessionId">
+            <Results />
+        </Route>*/}
+          <Route path="/hub">
+            <Hub />
+          </Route>
+          <Route path="/">
+            <Main />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
 }
-
-export default App
