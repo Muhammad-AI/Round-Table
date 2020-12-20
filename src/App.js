@@ -10,6 +10,8 @@ import {
 import Main from './pages/Main';
 import Join from './pages/Join';
 import Hub from './pages/Hub';
+import Lobby from './pages/Lobby';
+import './firebase/config'
 
 export default function App() {
   return (
@@ -19,10 +21,10 @@ export default function App() {
           <Route path="/join">
             <Join />
           </Route>
-          {/*<Route path="/results/:sessionId">
-            <Results />
-        </Route>*/}
-          <Route path="/hub">
+          <Route path="/lobby/:name">
+            <Lobby />
+          </Route>
+          <Route path="/hub/:pin">
             <Hub />
           </Route>
           <Route path="/">
