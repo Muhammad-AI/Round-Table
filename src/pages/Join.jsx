@@ -24,7 +24,10 @@ const Join = () => {
       } else {
         throw new Error('Wrong Pin')
       }
-      history.push(`/lobby/${name}`);
+      history.push(`/lobby`, {
+        pin: pin,
+        name: name
+      });
     } catch (error) {
       console.log(error)
     }
