@@ -8,12 +8,26 @@ const Play = () => {
     const {name, pin, rank} = useLocation().state;
     const [isQuestioner, setIsQuestioner] = React.useState(false);
     const [isAnswerer, setIsAnswerer] = React.useState(false);
+    const [isCheckingAnswer, setIsCheckingAnswer] = React.useState(false);
     const [gameDocument, setGameDocument] = React.useState(null);
 
+    // updated to be answerer
     const setAnswerer = async (answerRank) => {
+        setIsQuestioner(false);
+        // set to be answerer
         await updateGameDocument({
             pin: pin,
             answerer: gameDocument.players.find(player => player.rank === answerRank),
+        });
+        setIsCheckingAnswer(true);
+    };
+
+    // sets questioner's correctness of answer
+    const submitAnswer = async (isCorrect) => {
+        setIsCheckingAnswer(false);
+        await updateGameDocument({
+            pin: pin,
+            questioner: {...gameDocument.questioner, isAnswererCorrect: isCorrect},
         });
     };
 
@@ -23,6 +37,8 @@ const Play = () => {
         </div>
     );
 
+    // Who to ask display
+    // TODO:NEED MODIFICATION
     const QuestionerDisplay = () => (
         <div>
             <h1>{name}, your turn to ask the question. Who would you like to ask?</h1>
@@ -35,14 +51,21 @@ const Play = () => {
             <Button variant="outlined" color="primary" onClick={() => setAnswerer(3)}>
                 Ranked 3: {gameDocument.players.find(player => player.rank === 3).name}
             </Button>
+            
+        </div>
+    );
+    
+    // Questioner assessment call display
+    const CheckAnswerDisplay = () => (
+        <>
             <h1>Is the Answer given correct?</h1>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={() => submitAnswer(true)}>
               yes
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={() => submitAnswer(false)}>
               no
             </Button>
-        </div>
+        </>
     );
 
     const AnswererDisplay = () => (
@@ -51,6 +74,7 @@ const Play = () => {
 
     React.useEffect(() => {
         const docRef = firestore.collection('games').doc(pin);
+        // update game document and change states of player
         const unsubscribe = docRef.onSnapshot((doc) => {
             doc.exists && setGameDocument(doc.data());
             if(doc.exists && doc.data().questioner.rank === rank){
@@ -72,6 +96,7 @@ const Play = () => {
             <NormalDisplay />
             {isQuestioner && <QuestionerDisplay />}
             {isAnswerer && <AnswererDisplay />}
+            {isCheckingAnswer && <CheckAnswerDisplay />}
         </>
     )
 }

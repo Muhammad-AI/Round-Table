@@ -9,17 +9,23 @@ const Join = () => {
   const history = useHistory();
   const [pin, setPin] = React.useState('');
   const [name, setName] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = async () => {
     try {
+      setIsLoading(true);
+      // ref of pin doc
       const docRef = firestore.collection('games').doc(pin);
+      // gets the doc
       const doc = await docRef.get();
+      // update player
       if(doc.exists){
         let players = doc.data().players;
         players.push({
           name: name,
           rank: 0
         });
+        // updates data
         await updateGameDocument({ pin: pin, players: players});
       } else {
         throw new Error('Wrong Pin')
@@ -29,15 +35,18 @@ const Join = () => {
         name: name
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   return (
-      <div>
+    (isLoading)?
+      (<h1>Loading ...</h1>):
+      (<div>
           <TextField
             id="pin"
             label="Pin Number"
+            type="number"
             value={pin}
             onChange={(event) => setPin(event.target.value)}
             
@@ -45,6 +54,7 @@ const Join = () => {
           <TextField
             id="name"
             label="Nickname"
+            type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
             
@@ -52,7 +62,7 @@ const Join = () => {
           <Button variant="contained" color="primary" onClick={onSubmit}>
             Add
           </Button>
-      </div>
+      </div>)
   )
 }
 
