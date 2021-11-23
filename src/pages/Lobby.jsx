@@ -9,8 +9,12 @@ const Lobby = () => {
     const history = useHistory();
     
     React.useEffect(() => {
+        // ref for pin doc
         const docRef = firestore.collection('games').doc(pin);
+
+        // listener that checks if game started then redirects to play 
         const unsubscribe = docRef.onSnapshot((doc) => {
+            // if game started
             if(doc.exists && doc.data().questioner.rank !== 0){
                 const rank = doc.data().players.find(player => player.name === name).rank;
                 history.push('/play', {
